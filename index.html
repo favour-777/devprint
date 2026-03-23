@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DevPrint - Your Developer Fingerprint</title>
-  <meta name="description" content="Turn any GitHub profile into a clear developer snapshot. Languages, activity, archetypes, and a recruiter-ready summary in seconds.">
+  <meta name="description" content="Turn any GitHub profile into a clear developer fingerprint. Languages, activity, archetypes, and a recruiter-ready summary in seconds.">
   <meta name="theme-color" content="#0d1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -159,12 +159,26 @@
       padding: 10px 10px 10px 24px;
       transition: all 0.3s ease;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
     }
 
     .search-box:focus-within {
       border-color: rgba(0, 240, 160, 0.4);
       box-shadow: 0 0 0 1px rgba(0, 240, 160, 0.4), 0 8px 40px var(--accent-glow);
     }
+
+    .search-box::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 14px;
+      background: linear-gradient(120deg, rgba(0, 240, 160, 0.12), transparent 45%);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .search-box > * { position: relative; z-index: 1; }
 
     .search-prefix {
       display: inline-flex;
@@ -625,7 +639,6 @@
       }
     }
 
-    /* Search history chips */
     .history-wrap {
       max-width: 540px;
       margin: 12px auto 0;
@@ -666,7 +679,26 @@
       background: var(--accent-dim);
     }
 
-    /* Top repo card */
+    .history-clear {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid rgba(0, 240, 160, 0.55);
+      border-radius: 999px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      box-shadow: 0 0 0 1px rgba(0, 240, 160, 0.18) inset;
+    }
+
+    .history-clear:hover {
+      color: var(--bg);
+      border-color: var(--accent);
+      background: rgba(0, 240, 160, 0.2);
+    }
+
     .top-repo-card {
       padding: 32px 40px;
       margin-bottom: 24px;
@@ -752,7 +784,6 @@
       background: var(--accent-dim);
     }
 
-    /* Activity level badge on dev type card */
     .activity-badge {
       display: inline-flex;
       align-items: center;
@@ -782,7 +813,6 @@
       50% { opacity: 0.4; transform: scale(0.8); }
     }
 
-    /* Section card relative for copy btn positioning */
     .section-card { position: relative; }
 
     .recruiter-text.loading-text {
@@ -864,9 +894,9 @@
     @media (max-width: 768px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .profile-card { flex-direction: column; text-align: left; }
+      .stats-grid .stat-card:nth-child(3) { grid-column: 1 / -1; }
     }
 
-    /* Windows/Chromium scrollbar styling */
     ::-webkit-scrollbar {
       width: 14px;
       height: 10px;
@@ -901,11 +931,9 @@
       background: transparent;
     }
 
-    /* Each direction has 2 button slots (start + end) - hide the outer ones */
     ::-webkit-scrollbar-button:vertical:decrement:start { display: none; }
     ::-webkit-scrollbar-button:vertical:increment:end   { display: none; }
 
-    /* Up arrow - filled triangle, rounded via stroke overlay */
     ::-webkit-scrollbar-button:vertical:decrement:end {
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'><polygon points='6,9 1,1 11,1' fill='%2300f0a0' stroke='%2300f0a0' stroke-width='2' stroke-linejoin='round'/></svg>");
       background-repeat: no-repeat;
@@ -913,7 +941,6 @@
       background-position: center bottom 8px;
     }
 
-    /* Down arrow */
     ::-webkit-scrollbar-button:vertical:increment:start {
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'><polygon points='6,1 11,9 1,9' fill='%2300f0a0' stroke='%2300f0a0' stroke-width='2' stroke-linejoin='round'/></svg>");
       background-repeat: no-repeat;
@@ -995,8 +1022,8 @@
   </header>
 
   <section class="hero">
-    <h1>Turn a GitHub profile into a <em>developer snapshot</em>.</h1>
-    <p>Enter a username. DevPrint summarizes impact, stack focus, and activity, then writes a recruiter-ready summary.</p>
+    <h1>Every developer leaves a <em>fingerprint</em>.</h1>
+    <p>DevPrint analyzes repos, contact info, languages, activity, and more to generate a clear developer report.</p>
 
     <div class="search-wrap">
       <div class="search-box solid-panel">
@@ -1006,7 +1033,7 @@
             <line x1="20" y1="20" x2="16.5" y2="16.5"></line>
           </svg>
         </span>
-        <input type="text" id="usernameInput" placeholder="torvalds" autocomplete="off" spellcheck="false" />
+        <input type="text" id="usernameInput" placeholder="Enter a username" autocomplete="off" spellcheck="false" />
         <button class="search-btn" id="analyzeBtn" onclick="analyze()">Analyze</button>
       </div>
     </div>
@@ -1054,6 +1081,14 @@
       return text.length > max ? `${text.slice(0, max - 1)}...` : text;
     };
 
+    const normalizePronounText = (value) => String(value || '')
+      .toLowerCase()
+      .replace(/[\u2044\u2215\uFF0F]/g, '/')
+      .replace(/\s*[\|·•]\s*/g, '/')
+      .replace(/\s*\/\s*/g, '/')
+      .replace(/\s+/g, ' ')
+      .trim();
+
     const PRONOUNS = [
       { match: /(^|[^a-z])(he\/him(\/his)?)(?=$|[^a-z])/i, subject: 'he', object: 'him', possessive: 'his', label: 'he/him' },
       { match: /(^|[^a-z])(she\/her(\/hers)?)(?=$|[^a-z])/i, subject: 'she', object: 'her', possessive: 'her', label: 'she/her' },
@@ -1067,10 +1102,8 @@
 
     const getPronouns = (bio) => {
       if (!bio) return null;
-      const text = String(bio).toLowerCase();
-      const explicit = text.match(/pronouns?\s*[:\-–]\s*([^\n|•;,]+)/i);
-      const haystack = explicit ? explicit[1] : text;
-      const found = PRONOUNS.find(p => p.match.test(haystack));
+      const text = normalizePronounText(bio);
+      const found = PRONOUNS.find(p => p.match.test(text));
       return found ? { subject: found.subject, object: found.object, possessive: found.possessive, label: found.label } : null;
     };
     
@@ -1092,7 +1125,7 @@
       }
     });
 
-    // --- Search History ---
+    
     function getHistory() {
       try { return JSON.parse(localStorage.getItem('devprint_history') || '[]'); } catch { return []; }
     }
@@ -1104,12 +1137,18 @@
       renderHistory();
     }
 
+    function clearHistory() {
+      localStorage.removeItem('devprint_history');
+      renderHistory();
+    }
+
     function renderHistory() {
       const wrap = $('historyWrap');
       if (!wrap) return;
       const h = getHistory();
       if (!h.length) { wrap.innerHTML = ''; return; }
-      wrap.innerHTML = `<span class="history-label">Recent</span>` +
+      wrap.innerHTML = `<span class="history-label">Recent</span>
+        <button class="history-clear" onclick="clearHistory()" aria-label="Clear recent searches">CLEAR</button>` +
         h.map(u => `<button class="history-chip" onclick="quickSearch('${u}')">@${u}</button>`).join('');
     }
 
@@ -1118,13 +1157,12 @@
       analyze();
     }
 
-    // --- Loading steps ---
     const LOAD_STEPS = [
-      'Pulling profile...',
+      'Fetching profile...',
       'Scanning repositories...',
-      'Finding patterns...',
+      'Analyzing patterns...',
       'Calculating impact...',
-      'Almost ready...'
+      'Preparing report...'
     ];
     let loadStepIndex = 0;
     let loadStepTimer = null;
@@ -1179,7 +1217,6 @@
       box.classList.add('active');
     };
 
-    // --- Typewriter effect ---
     function typewrite(el, text, speed = 18) {
       el.textContent = '';
       el.classList.remove('loading-text');
@@ -1193,7 +1230,6 @@
       tick();
     }
 
-    // --- GitHub fetch ---
     async function ghFetch(path) {
       const headers = { 'Accept': 'application/vnd.github.v3+json' };
       if (GITHUB_TOKEN) headers['Authorization'] = `token ${GITHUB_TOKEN}`;
@@ -1348,12 +1384,12 @@
       };
     }
 
-    // Comparison removed.
 
     async function getRecruiterSummary(user, repos, devType, topLangs) {
       const pronouns = getPronouns(user.bio);
       const pronounLine = pronouns ? `Pronouns: ${pronouns.label}.` : '';
-      const prompt = `Write a concise 3-sentence recruiter brief in a natural, human tone. Avoid buzzwords and fluff. Mention core stack, activity, and one standout trait. Developer: ${user.name || user.login}. Public Repos: ${user.public_repos}. Developer Type: ${devType.name}. Top Languages: ${topLangs.map(l => l[0]).join(', ')}. ${pronounLine}`;
+      const bioLine = user.bio ? `Bio: ${user.bio}` : '';
+      const prompt = `Write a concise 3-sentence recruiter brief in a natural, human tone. Avoid buzzwords and fluff. Mention core stack, activity, and one standout trait. Use pronouns stated in the bio if present; otherwise use they/them. Developer: ${user.name || user.login}. Public Repos: ${user.public_repos}. Developer Type: ${devType.name}. Top Languages: ${topLangs.map(l => l[0]).join(', ')}. ${pronounLine} ${bioLine}`;
       try {
         const res = await fetch('/api/summary', {
           method: 'POST',
@@ -1379,7 +1415,6 @@
         const text = atob(readme.content.replace(/\s+/g, ''));
 
         const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-        // Only match explicit twitter.com / x.com URLs - never bare @ handles
         const twitterMatch = text.match(/https?:\/\/(?:twitter\.com|x\.com)\/([a-zA-Z0-9_]{1,15})/i);
         const linkedinMatch = text.match(/https?:\/\/(?:www\.)?linkedin\.com\/in\/[^\s"')>]+/i);
         const instagramMatch = text.match(/https?:\/\/(?:www\.)?instagram\.com\/([a-zA-Z0-9_.]{1,30})/i);
@@ -1434,7 +1469,7 @@
       const el = $('recruiterText');
       if (el) {
         el.classList.remove('loading-text');
-        el.textContent = 'Shared snapshot loaded. Run a fresh analysis to generate the live recruiter summary.';
+        el.textContent = 'Shared report loaded. Run a fresh analysis to generate an updated recruiter summary.';
       }
     }
 
@@ -1471,31 +1506,23 @@
         links.push({ href, icon, label });
       };
 
-      // Email - prefer profile, fall back to README
       const email = user.email || rc.email;
       if (email) add(`mailto:${email}`, ICONS.email, email);
 
-      // Twitter/X - profile only (README twitter was unreliable)
       if (user.twitter_username) add(`https://x.com/${user.twitter_username}`, ICONS.twitter, `@${user.twitter_username}`);
 
-      // LinkedIn - always just "LinkedIn"
       const liUrl = (user.blog && user.blog.includes('linkedin')) ? (user.blog.startsWith('http') ? user.blog : 'https://' + user.blog) : rc.linkedin;
       if (liUrl) add(liUrl, ICONS.linkedin, 'LinkedIn');
 
-      // Instagram
       if (rc.instagram) add(`https://instagram.com/${rc.instagram}`, ICONS.instagram, `@${rc.instagram}`);
 
-      // Telegram
       if (rc.telegram) add(`https://t.me/${rc.telegram}`, ICONS.telegram, `@${rc.telegram}`);
 
-      // WhatsApp
       if (rc.whatsapp) add(`https://wa.me/${rc.whatsapp}`, ICONS.whatsapp, 'WhatsApp');
 
-      // Website/blog - skip if already captured as LinkedIn
       const blog = user.blog && !user.blog.includes('linkedin') ? (user.blog.startsWith('http') ? user.blog : 'https://' + user.blog) : null;
       if (blog) add(blog, ICONS.link, blog.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, ''));
 
-      // README website - skip social domains already handled and badge URLs
       const skipDomains = ['linkedin.com','twitter.com','x.com','instagram.com','t.me','wa.me','whatsapp.com','shields.io','travis-ci','circleci'];
       if (rc.website && !skipDomains.some(d => rc.website.includes(d))) {
         const label = rc.website.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');

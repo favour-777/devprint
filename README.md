@@ -1,26 +1,39 @@
-# DevPrint
+<h1 align="left">
+  <img src="Assets/DevPrint (Squircle).png" width="33" style="vertical-align: middle; margin-right: 10px;">
+  DevPrint
+</h1>
 
-DevPrint turns a GitHub profile into a clear developer snapshot. It summarizes impact, stack focus, and activity in one place, then produces a recruiter-ready brief.
+DevPrint analyzes a GitHub profile and generates a clean developer report. It summarizes impact, stack focus, activity, and contact information in one place, then produces a recruiter-ready brief.
 
 ## Why I Built This
-I was recruited through GitHub. That moment stuck with me. DevPrint is my answer to a simple question: can a profile tell a clean story without forcing anyone to scan dozens of repos?
+
+I was recruited for this program through GitHub. That moment stuck with me.
+
+DevPrint started with a simple question: **can a GitHub profile reveal a developer’s work at a glance, without scanning dozens of repos?**
 
 ## Who This Is For
-- Recruiters who need a fast, reliable first pass
-- Hiring managers who want a quick read before a deeper review
-- Developers who want a shareable snapshot
+
+- Recruiters who need a fast first pass on a developer profile  
+- Hiring managers who want a quick read before a deeper review  
+- Developers who want a clean, shareable profile report  
 
 ## Core Features
-- Profile overview with clean metadata and contact links
-- Impact breakdown with a transparent scoring summary
-- Language mix visualization with animated bars
-- Developer type classification
-- Recruiter brief with a graceful fallback if the summary service is off
-- Pronoun aware copy when listed in a bio
-- Shareable report link (snapshot based)
+
+- Profile overview with clean metadata and contact links  
+- Impact breakdown with a transparent scoring summary  
+- Language mix visualization with animated bars  
+- Developer type classification  
+- Recruiter brief with a graceful fallback if the summary service is unavailable  
+- Pronoun-aware copy when listed in a bio  
+- Shareable report links (snapshot-based)
 
 ## How It Works
-- Pulls public GitHub profile and repo data
-- Extracts language usage from recent repos
-- Computes impact from stars, forks, followers, and activity
-- Generates a short recruiter brief via a serverless summary endpoint (or a local fallback)
+
+- Pulls public GitHub profile and repository data  
+- Extracts language usage from recent repositories  
+- Computes an impact score from stars, forks, followers, and activity  
+- Generates a short recruiter brief via a serverless summary endpoint (with a local fallback)
+
+## Try It
+
+Run an analysis on any public GitHub username to generate a full developer report. Click this link to do so - [DevPrint](https://devprint.vercel.app)
