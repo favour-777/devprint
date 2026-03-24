@@ -1,3 +1,4 @@
+<!-- Made for RHDC - Favour -->
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -9,13 +10,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DevPrint">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/web/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/web/favicon-16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/web/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Assets/icons/web/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Assets/icons/web/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="Assets/icons/web/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -30,7 +31,7 @@
       --text-muted: #8b949e;
       --text-mid: #a5d6ff;
       --red: #ff7b72;
-      --font-mono: 'Consolas', monospace;
+      --font-mono: 'JetBrains Mono', 'Consolas', monospace;
     }
 
     [data-theme="light"] {
@@ -331,6 +332,20 @@
       font-size: 1rem;
       margin-bottom: 20px;
     }
+
+    .at-wrap {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0;
+    }
+
+    .at-text { font-family: inherit; }
+
+    .at-mark {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
     
     .profile-info .bio {
       font-size: 1.05rem;
@@ -615,6 +630,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      touch-action: manipulation;
     }
 
     .copy-summary-btn:hover { color: var(--text); border-color: var(--text); }
@@ -622,20 +638,59 @@
     .section-head {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 16px;
       margin-bottom: 32px;
     }
 
     .section-head .section-title {
       margin-bottom: 0;
-      flex: 1;
     }
+
+    .claude-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 0;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: rgba(0, 240, 160, 0.08);
+      border: 1px solid rgba(0, 240, 160, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .copy-summary-btn { margin-left: auto; }
 
     @media (max-width: 520px) {
       .section-head {
-        flex-direction: column;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        column-gap: 12px;
+        row-gap: 8px;
+      }
+      .section-head .section-title {
+        text-align: center;
+        justify-content: center;
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .copy-summary-btn {
+        justify-self: end;
+        grid-column: 2;
+        grid-row: 1;
+        margin-left: 0;
+      }
+      .claude-badge {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
       }
     }
 
@@ -1023,7 +1078,7 @@
 
   <section class="hero">
     <h1>Every developer leaves a <em>fingerprint</em>.</h1>
-    <p>DevPrint analyzes repos, contact info, languages, activity, and more to generate a clear developer report.</p>
+    <p>DevPrint analyzes repos, contact info, languages, activity, and more from a GitHub profile to generate a clear developer report.</p>
 
     <div class="search-wrap">
       <div class="search-box solid-panel">
@@ -1079,6 +1134,18 @@
       if (!value) return '';
       const text = String(value).trim();
       return text.length > max ? `${text.slice(0, max - 1)}...` : text;
+    };
+
+    const formatAt = (value) => {
+      if (!value) return '';
+      const cleaned = String(value).replace(/\s*@\s*/g, '@');
+      const idx = cleaned.indexOf('@');
+      if (idx === -1) return cleaned;
+      const before = cleaned.slice(0, idx);
+      const after = cleaned.slice(idx + 1);
+      const left = before ? `<span class="at-text">${before}</span>` : '';
+      const right = after ? `<span class="at-text">${after}</span>` : '';
+      return `<span class="at-wrap">${left}<span class="at-mark">@</span>${right}</span>`;
     };
 
     const normalizePronounText = (value) => String(value || '')
@@ -1149,7 +1216,7 @@
       if (!h.length) { wrap.innerHTML = ''; return; }
       wrap.innerHTML = `<span class="history-label">Recent</span>
         <button class="history-clear" onclick="clearHistory()" aria-label="Clear recent searches">CLEAR</button>` +
-        h.map(u => `<button class="history-chip" onclick="quickSearch('${u}')">@${u}</button>`).join('');
+        h.map(u => `<button class="history-chip" onclick="quickSearch('${u}')">${formatAt(`@${u}`)}</button>`).join('');
     }
 
     function quickSearch(username) {
@@ -1389,7 +1456,24 @@
       const pronouns = getPronouns(user.bio);
       const pronounLine = pronouns ? `Pronouns: ${pronouns.label}.` : '';
       const bioLine = user.bio ? `Bio: ${user.bio}` : '';
-      const prompt = `Write a concise 3-sentence recruiter brief in a natural, human tone. Avoid buzzwords and fluff. Mention core stack, activity, and one standout trait. Use pronouns stated in the bio if present; otherwise use they/them. Developer: ${user.name || user.login}. Public Repos: ${user.public_repos}. Developer Type: ${devType.name}. Top Languages: ${topLangs.map(l => l[0]).join(', ')}. ${pronounLine} ${bioLine}`;
+      const prompt = `You are writing a recruiter brief for a developer profile. Output plain text only. No markdown, no bullet points, no headers, no bold, no italics, no dashes, no em dashes, no hyphens between thoughts. Just three clean sentences that flow naturally.
+
+      Sentence 1: Summarize their technical identity and core stack.
+      Sentence 2: Describe their activity pattern or project style.
+      Sentence 3: Call out one standout trait that makes them memorable.
+      
+      Rules:
+      - Never use buzzwords like "passionate", "innovative", "leverage", or "utilize"
+      - Never use em dashes or markdown formatting of any kind
+      - Use pronouns from bio if present. If name or bio strongly implies a gender, use he/she. Otherwise default to they/them
+      - Write like a sharp recruiter who has seen a thousand profiles and knows what actually matters
+
+      Developer: ${user.name || user.login}
+      Public Repos: ${user.public_repos}
+      Developer Type: ${devType.name}
+      Top Languages: ${topLangs.map(l => l[0]).join(', ')}
+      ${pronounLine}
+      ${bioLine}`;
       try {
         const res = await fetch('/api/summary', {
           method: 'POST',
@@ -1436,7 +1520,8 @@
 
     function shareProfile() {
       const baseUrl = `${window.location.origin}${window.location.pathname}`;
-      const url = lastReport ? `${baseUrl}#report=${encodeReport(lastReport)}` : baseUrl;
+      const username = lastReport?.data?.user?.login || $('usernameInput')?.value?.trim();
+      const url = username ? `${baseUrl}?user=${encodeURIComponent(username)}` : baseUrl;
       navigator.clipboard.writeText(url).then(() => {
         const btn = $('shareBtn');
         btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
@@ -1444,20 +1529,29 @@
           btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> Share Report`;
         }, 2000);
       }).catch(() => {
-        window.prompt('Copy shareable report link:', url);
+        window.prompt('Copy shareable profile link:', url);
       });
     }
 
     function copySummary() {
       const text = $('recruiterText')?.textContent;
       if (!text || text === 'Generating summary...') return;
-      navigator.clipboard.writeText(text).then(() => {
+      const onCopied = () => {
         const btn = $('copySummaryBtn');
+        if (!btn) return;
         btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
         setTimeout(() => {
           btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy`;
         }, 2000);
-      });
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(onCopied).catch(() => {
+          window.prompt('Copy recruiter summary:', text);
+        });
+      } else {
+        window.prompt('Copy recruiter summary:', text);
+      }
     }
 
     function renderSharedReport(payload) {
@@ -1507,16 +1601,19 @@
       };
 
       const email = user.email || rc.email;
-      if (email) add(`mailto:${email}`, ICONS.email, email);
+      if (email) {
+        const cleanedEmail = email.replace(/\s*@\s*/g, '@');
+        add(`mailto:${cleanedEmail}`, ICONS.email, formatAt(cleanedEmail));
+      }
 
-      if (user.twitter_username) add(`https://x.com/${user.twitter_username}`, ICONS.twitter, `@${user.twitter_username}`);
+      if (user.twitter_username) add(`https://x.com/${user.twitter_username}`, ICONS.twitter, formatAt(`@${user.twitter_username}`));
 
       const liUrl = (user.blog && user.blog.includes('linkedin')) ? (user.blog.startsWith('http') ? user.blog : 'https://' + user.blog) : rc.linkedin;
       if (liUrl) add(liUrl, ICONS.linkedin, 'LinkedIn');
 
-      if (rc.instagram) add(`https://instagram.com/${rc.instagram}`, ICONS.instagram, `@${rc.instagram}`);
+      if (rc.instagram) add(`https://instagram.com/${rc.instagram}`, ICONS.instagram, formatAt(`@${rc.instagram}`));
 
-      if (rc.telegram) add(`https://t.me/${rc.telegram}`, ICONS.telegram, `@${rc.telegram}`);
+      if (rc.telegram) add(`https://t.me/${rc.telegram}`, ICONS.telegram, formatAt(`@${rc.telegram}`));
 
       if (rc.whatsapp) add(`https://wa.me/${rc.whatsapp}`, ICONS.whatsapp, 'WhatsApp');
 
@@ -1605,7 +1702,7 @@
           <img src="${user.avatar_url}" alt="${user.login}" />
           <div class="profile-info">
             <h2>${user.name || user.login}</h2>
-            <div class="handle">@${user.login}</div>
+            <div class="handle">${formatAt(`@${user.login}`)}</div>
             ${user.bio ? `<div class="bio">${user.bio}</div>` : ''}
             <div class="profile-meta">
               ${user.company ? `<div class="meta-item"><strong>Company</strong> ${user.company}</div>` : ''}
@@ -1645,11 +1742,12 @@
 
         <div class="section-card solid-panel" id="recruiterCard">
           <div class="section-head">
-            <div class="section-title">Recruiter Brief</div>
+            <div class="section-title">Recruiter Overview</div>
             <button id="copySummaryBtn" class="copy-summary-btn" onclick="copySummary()">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               Copy
             </button>
+            <div class="claude-badge">Powered by Claude AI</div>
           </div>
           <div class="recruiter-text loading-text" id="recruiterText">Drafting the summary...</div>
         </div>

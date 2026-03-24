@@ -13,6 +13,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 300,
+        system: 'You write recruiter briefs. Output plain text only. No markdown, no bullet points, no headings, no code, and never use em dashes. Keep exactly 3 sentences. If gender is not explicitly stated or certain, default to they/them.',
         messages: [{ role: 'user', content: prompt }],
       }),
     });

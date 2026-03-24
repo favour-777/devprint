@@ -3,37 +3,67 @@
   DevPrint
 </h1>
 
-DevPrint analyzes a GitHub profile and generates a clean developer report. It summarizes impact, stack focus, activity, and contact information in one place, then produces a recruiter-ready brief.
+DevPrint analyzes a GitHub profile and generates a clean developer report. It highlights impact, stack focus, activity, and contact information in one place, then produces an AI-powered recruiter overview. This project was built as my submission for <i>Remote Hustle's</i> Developer Challenge (RHDC).
+
+---
 
 ## Why I Built This
 
-I was recruited for this program through GitHub. That moment stuck with me.
+I was recruited for this program (RHDC) through GitHub, and that moment stuck with me.  
 
-DevPrint started with a simple question: **can a GitHub profile reveal a developer’s work at a glance, without scanning dozens of repos?**
+DevPrint began with a simple question: **can recruitment be streamlined through instant profile analysis?**  
+
+DevPrint does exactly that and more. It not only analyzes repositories and activity, but also scans bios and READMEs for ways to get in touch, giving recruiters a complete snapshot in seconds.
+
+---
 
 ## Who This Is For
 
-- Recruiters who need a fast first pass on a developer profile  
-- Hiring managers who want a quick read before a deeper review  
-- Developers who want a clean, shareable profile report  
+- **Recruiters** who need a concise snapshot of a developer profile  
+- **Hiring managers** who want a quick read before a deeper review  
+- **Developers** who want a clean, shareable profile report  
+
+---
 
 ## Core Features
 
-- Profile overview with clean metadata and contact links  
-- Impact breakdown with a transparent scoring summary  
+- AI-powered recruiter summary  
+- Profile overview with clean metadata and contact links (from READMEs and bios)  
+- Impact score with clear breakdown of stars, forks, followers, and activity  
 - Language mix visualization with animated bars  
-- Developer type classification  
-- Recruiter brief with a graceful fallback if the summary service is unavailable  
-- Pronoun-aware copy when listed in a bio  
-- Shareable report links (snapshot-based)
+- Developer archetype classification  
+- Recruiter snapshot with automatic fallback if the summary service is unavailable  
+- Shareable report links  
+
+---
 
 ## How It Works
 
-- Pulls public GitHub profile and repository data  
-- Extracts language usage from recent repositories  
-- Computes an impact score from stars, forks, followers, and activity  
-- Generates a short recruiter brief via a serverless summary endpoint (with a local fallback)
+1. Pulls public GitHub profile and repository data  
+2. Extracts language usage from recent repositories  
+3. Computes an impact score from stars, forks, followers, and activity  
+4. Generates an AI recruiter overview using a serverless summary endpoint, with local fallback if needed  
+
+---
 
 ## Try It
 
-Run an analysis on any public GitHub username to generate a full developer report. Click this link to do so - [DevPrint](https://devprint.vercel.app)
+Run an analysis on any public GitHub username to generate a full developer report - [DevPrint](https://devprint.vercel.app)
+
+---
+
+## Upcoming Features
+
+- Add deeper activity insights (commit frequency, contribution graph)  
+- Expand recruiter summaries with role-specific recommendations  
+- Support private repositories via OAuth (optional)  
+- Export reports in PDF or Markdown for easy sharing  
+  
+  **Community feedback welcome: open an issue, use DevPrint to find my contact info, or click the icons on my profile README** 
+
+---
+
+## License
+
+MIT License – free to use, modify, and share.  
+I 💖 open source.
